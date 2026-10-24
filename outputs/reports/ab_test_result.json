@@ -1,0 +1,7 @@
+{
+  "verdict": "SHIP",
+  "ctr_rel_lift": 0.18171926006528852,
+  "ctr_p_value": 0.0001485410197068493,
+  "n_control": 30000,
+  "n_treatment": 30000
+}

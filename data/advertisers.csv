@@ -1,0 +1,301 @@
+advertiser_id,advertiser_name,category,city_tier,advertiser_size,signup_date,churn_date
+ADV0001,Fresh Beverages Bites,Beverages,Tier-1,Mid,2026-03-25,
+ADV0002,Fresh Chinese Kitchen,Chinese,Tier-1,SMB,2025-04-13,
+ADV0003,Smoky Healthy Studio,Healthy,Tier-2,SMB,2025-05-16,2025-09-23
+ADV0004,Crispy Desserts Bites,Desserts,Tier-1,SMB,2026-03-12,
+ADV0005,Tasty Biryani Bites,Biryani,Tier-2,Mid,2025-07-21,
+ADV0006,Urban Fast Food Bites,Fast Food,Tier-1,SMB,2025-09-25,
+ADV0007,Tasty Desserts Co.,Desserts,Tier-2,SMB,2026-01-31,
+ADV0008,Crispy Beverages Kitchen,Beverages,Metro,Mid,2025-05-09,
+ADV0009,Royal Biryani Studio,Biryani,Tier-1,SMB,2025-03-26,2026-01-19
+ADV0010,Royal Chinese Co.,Chinese,Metro,SMB,2025-01-05,
+ADV0011,Cloud Chinese Co.,Chinese,Tier-1,SMB,2025-07-21,2026-01-24
+ADV0012,Golden Fast Food Corner,Fast Food,Tier-1,SMB,2025-07-08,2026-02-12
+ADV0013,Desi South Indian Co.,South Indian,Tier-2,SMB,2026-04-12,
+ADV0014,Fresh Beverages House,Beverages,Tier-2,SMB,2025-12-06,
+ADV0015,Desi Chinese Express,Chinese,Metro,SMB,2025-12-01,
+ADV0016,Crispy Pizza Kitchen,Pizza,Tier-1,SMB,2025-11-18,2026-04-25
+ADV0017,Crispy North Indian Express,North Indian,Tier-1,SMB,2025-04-23,2025-08-28
+ADV0018,Tasty Biryani Studio,Biryani,Metro,Mid,2025-02-17,
+ADV0019,Fresh Beverages Corner,Beverages,Metro,SMB,2025-02-22,2025-12-03
+ADV0020,Crispy South Indian Co.,South Indian,Metro,Chain,2025-08-19,
+ADV0021,Fresh Desserts Hub,Desserts,Tier-1,Chain,2025-02-16,
+ADV0022,Cloud Burgers Bites,Burgers,Tier-1,SMB,2026-01-20,
+ADV0023,Tasty Fast Food Express,Fast Food,Tier-2,SMB,2025-08-04,
+ADV0024,Royal Healthy Hub,Healthy,Tier-1,SMB,2025-10-23,
+ADV0025,Cloud Beverages House,Beverages,Tier-2,Mid,2025-03-05,
+ADV0026,Spice Pizza House,Pizza,Metro,Mid,2025-04-12,2026-02-20
+ADV0027,Crispy North Indian Corner,North Indian,Tier-1,Mid,2025-01-29,
+ADV0028,Fresh Biryani Bites,Biryani,Metro,SMB,2025-07-13,
+ADV0029,Fresh Pizza Express,Pizza,Tier-1,Mid,2025-12-24,
+ADV0030,Royal Desserts House,Desserts,Tier-2,SMB,2025-11-18,
+ADV0031,Cloud Desserts Studio,Desserts,Tier-2,Mid,2025-01-24,
+ADV0032,Desi Fast Food Corner,Fast Food,Tier-2,SMB,2025-12-06,2026-06-08
+ADV0033,Tasty Burgers Studio,Burgers,Metro,Mid,2026-04-10,
+ADV0034,Crispy Chinese House,Chinese,Metro,Mid,2025-09-04,
+ADV0035,Fresh North Indian Co.,North Indian,Metro,SMB,2025-11-13,
+ADV0036,Golden Pizza Bites,Pizza,Metro,Mid,2025-04-13,
+ADV0037,Tasty Biryani Hub,Biryani,Tier-1,SMB,2025-12-22,
+ADV0038,Royal North Indian Express,North Indian,Tier-1,Mid,2025-05-03,
+ADV0039,Desi Pizza Bites,Pizza,Tier-1,SMB,2025-11-27,
+ADV0040,Fresh South Indian House,South Indian,Tier-2,Chain,2025-01-12,
+ADV0041,Golden Chinese Kitchen,Chinese,Tier-1,SMB,2025-03-07,
+ADV0042,Desi Beverages Express,Beverages,Tier-2,Chain,2025-07-30,
+ADV0043,Smoky Desserts Hub,Desserts,Metro,Mid,2025-01-02,
+ADV0044,Spice Burgers Kitchen,Burgers,Metro,SMB,2026-04-14,
+ADV0045,Golden Beverages Corner,Beverages,Tier-1,Mid,2025-08-30,
+ADV0046,Crispy Beverages Studio,Beverages,Tier-2,Mid,2025-06-11,
+ADV0047,Tasty Chinese Hub,Chinese,Metro,Chain,2025-09-07,
+ADV0048,Fresh Burgers Hub,Burgers,Tier-1,SMB,2026-03-03,
+ADV0049,Royal Desserts Studio,Desserts,Tier-1,SMB,2025-11-04,
+ADV0050,Crispy Biryani Co.,Biryani,Metro,SMB,2025-02-01,2026-02-19
+ADV0051,Spice Pizza Studio,Pizza,Metro,Mid,2025-09-13,2025-11-27
+ADV0052,Royal Biryani Corner,Biryani,Tier-2,SMB,2025-06-11,
+ADV0053,Smoky Beverages Bites,Beverages,Tier-1,SMB,2025-01-18,2025-11-27
+ADV0054,Urban South Indian Express,South Indian,Metro,SMB,2025-03-27,2025-12-24
+ADV0055,Tasty Desserts Kitchen,Desserts,Tier-2,SMB,2026-04-28,
+ADV0056,Spice Beverages Bites,Beverages,Metro,SMB,2026-03-22,
+ADV0057,Desi Chinese Corner,Chinese,Tier-2,Mid,2026-03-26,
+ADV0058,Urban North Indian House,North Indian,Metro,Mid,2026-01-09,
+ADV0059,Urban Biryani House,Biryani,Tier-1,SMB,2025-10-18,
+ADV0060,Tasty Biryani Express,Biryani,Metro,SMB,2025-11-08,
+ADV0061,Tasty South Indian Kitchen,South Indian,Metro,Chain,2025-08-10,
+ADV0062,Fresh North Indian Hub,North Indian,Tier-2,SMB,2025-11-09,
+ADV0063,Golden North Indian House,North Indian,Metro,SMB,2025-03-27,
+ADV0064,Urban Desserts Corner,Desserts,Metro,SMB,2025-04-17,
+ADV0065,Desi South Indian Corner,South Indian,Metro,Mid,2025-09-01,
+ADV0066,Fresh North Indian Co.,North Indian,Tier-1,SMB,2025-12-10,
+ADV0067,Urban North Indian Hub,North Indian,Tier-2,Mid,2025-10-21,2026-05-04
+ADV0068,Golden Burgers Kitchen,Burgers,Tier-2,Mid,2025-05-03,2025-09-30
+ADV0069,Desi Biryani Co.,Biryani,Metro,SMB,2025-11-23,
+ADV0070,Spice Chinese Hub,Chinese,Metro,Chain,2025-02-08,
+ADV0071,Spice Pizza Express,Pizza,Metro,Mid,2025-06-11,
+ADV0072,Crispy Chinese Kitchen,Chinese,Tier-1,SMB,2025-01-18,
+ADV0073,Golden Healthy Kitchen,Healthy,Tier-2,SMB,2025-03-17,
+ADV0074,Golden Pizza House,Pizza,Tier-1,SMB,2026-01-31,
+ADV0075,Spice Biryani Corner,Biryani,Tier-1,SMB,2025-01-19,2026-01-26
+ADV0076,Spice Burgers Corner,Burgers,Metro,SMB,2025-09-30,2026-03-04
+ADV0077,Crispy Burgers Studio,Burgers,Tier-2,Chain,2025-12-06,
+ADV0078,Royal South Indian Corner,South Indian,Tier-1,SMB,2026-04-01,
+ADV0079,Smoky North Indian Co.,North Indian,Metro,SMB,2025-10-27,
+ADV0080,Urban Beverages Co.,Beverages,Metro,Mid,2025-01-25,
+ADV0081,Tasty South Indian Kitchen,South Indian,Metro,SMB,2025-10-03,
+ADV0082,Desi Chinese Co.,Chinese,Metro,Chain,2026-04-11,
+ADV0083,Crispy Beverages Hub,Beverages,Metro,Mid,2026-02-17,
+ADV0084,Smoky Pizza Corner,Pizza,Tier-1,SMB,2026-03-12,
+ADV0085,Crispy Biryani Kitchen,Biryani,Tier-1,SMB,2025-03-04,
+ADV0086,Royal Biryani Studio,Biryani,Metro,Chain,2025-08-05,
+ADV0087,Smoky Desserts Bites,Desserts,Metro,Mid,2025-02-14,
+ADV0088,Spice North Indian Kitchen,North Indian,Tier-2,Chain,2025-01-11,
+ADV0089,Cloud Pizza Co.,Pizza,Tier-1,SMB,2025-04-06,2026-04-18
+ADV0090,Urban North Indian Studio,North Indian,Tier-1,Mid,2026-03-11,2026-06-06
+ADV0091,Cloud Pizza Hub,Pizza,Metro,Mid,2026-04-11,
+ADV0092,Crispy Desserts Studio,Desserts,Tier-2,SMB,2025-08-17,2026-03-09
+ADV0093,Fresh Chinese Express,Chinese,Metro,SMB,2026-02-05,
+ADV0094,Urban Chinese Bites,Chinese,Metro,Mid,2025-04-21,
+ADV0095,Cloud Burgers Bites,Burgers,Tier-2,SMB,2025-07-22,
+ADV0096,Crispy South Indian Kitchen,South Indian,Tier-1,SMB,2026-04-05,
+ADV0097,Spice Chinese Corner,Chinese,Tier-1,Mid,2026-03-22,
+ADV0098,Cloud Biryani Co.,Biryani,Tier-1,SMB,2025-06-10,2025-11-28
+ADV0099,Fresh Biryani House,Biryani,Tier-1,SMB,2026-02-01,
+ADV0100,Crispy Fast Food Hub,Fast Food,Metro,SMB,2025-06-18,2026-02-24
+ADV0101,Royal Fast Food Bites,Fast Food,Metro,SMB,2025-05-07,
+ADV0102,Tasty Desserts Kitchen,Desserts,Metro,Chain,2025-11-13,
+ADV0103,Royal Burgers Corner,Burgers,Metro,Mid,2025-05-17,
+ADV0104,Tasty Fast Food Studio,Fast Food,Tier-2,SMB,2025-01-20,
+ADV0105,Fresh Beverages Hub,Beverages,Metro,Chain,2025-08-22,
+ADV0106,Royal Desserts Corner,Desserts,Tier-1,Mid,2026-04-21,
+ADV0107,Tasty Chinese Bites,Chinese,Tier-1,SMB,2025-09-26,
+ADV0108,Urban Burgers Corner,Burgers,Tier-1,Mid,2025-04-23,
+ADV0109,Royal Biryani House,Biryani,Metro,SMB,2026-02-26,
+ADV0110,Urban Fast Food Kitchen,Fast Food,Tier-1,Chain,2025-08-27,
+ADV0111,Crispy Chinese Bites,Chinese,Tier-2,Mid,2025-12-04,
+ADV0112,Cloud Pizza Hub,Pizza,Tier-1,Mid,2025-09-25,
+ADV0113,Crispy Burgers Co.,Burgers,Tier-2,SMB,2025-08-30,
+ADV0114,Royal North Indian Kitchen,North Indian,Tier-2,Chain,2026-04-20,
+ADV0115,Fresh Pizza Corner,Pizza,Tier-1,SMB,2025-01-19,
+ADV0116,Royal Healthy Bites,Healthy,Metro,SMB,2025-05-29,2025-10-27
+ADV0117,Crispy Desserts Co.,Desserts,Tier-1,SMB,2026-01-21,2026-06-04
+ADV0118,Cloud Desserts Bites,Desserts,Metro,Mid,2026-03-21,
+ADV0119,Cloud Chinese Hub,Chinese,Tier-1,SMB,2025-01-26,
+ADV0120,Smoky South Indian Co.,South Indian,Tier-2,Chain,2026-02-01,2026-05-24
+ADV0121,Crispy North Indian Studio,North Indian,Tier-1,Mid,2025-12-12,
+ADV0122,Tasty South Indian Corner,South Indian,Metro,SMB,2026-03-10,
+ADV0123,Tasty Biryani Hub,Biryani,Metro,SMB,2025-08-08,
+ADV0124,Golden Chinese Studio,Chinese,Tier-2,SMB,2026-04-23,
+ADV0125,Smoky Biryani Corner,Biryani,Metro,Mid,2026-01-05,
+ADV0126,Spice North Indian Co.,North Indian,Metro,Mid,2025-02-28,
+ADV0127,Cloud Burgers Bites,Burgers,Metro,SMB,2025-10-19,2025-12-30
+ADV0128,Urban Pizza House,Pizza,Metro,Mid,2026-04-13,
+ADV0129,Crispy Biryani Hub,Biryani,Tier-1,SMB,2026-01-07,2026-05-18
+ADV0130,Tasty North Indian Kitchen,North Indian,Tier-1,Mid,2025-08-08,
+ADV0131,Golden Pizza Corner,Pizza,Metro,Chain,2026-04-07,
+ADV0132,Fresh Fast Food House,Fast Food,Metro,Mid,2026-02-27,
+ADV0133,Crispy North Indian Express,North Indian,Metro,Mid,2025-09-30,
+ADV0134,Golden Burgers House,Burgers,Metro,Mid,2025-12-13,
+ADV0135,Fresh North Indian Express,North Indian,Metro,SMB,2025-10-26,
+ADV0136,Spice Biryani Hub,Biryani,Tier-1,SMB,2025-12-13,
+ADV0137,Fresh Fast Food Hub,Fast Food,Metro,SMB,2025-03-01,
+ADV0138,Golden North Indian Hub,North Indian,Metro,SMB,2026-03-31,
+ADV0139,Spice Beverages Express,Beverages,Metro,Mid,2025-09-04,2026-04-07
+ADV0140,Golden Biryani Corner,Biryani,Metro,Mid,2025-03-31,
+ADV0141,Desi North Indian Hub,North Indian,Metro,Mid,2025-02-22,
+ADV0142,Tasty North Indian Studio,North Indian,Metro,SMB,2026-01-31,2026-06-02
+ADV0143,Royal Fast Food Co.,Fast Food,Tier-2,Mid,2026-02-18,
+ADV0144,Urban North Indian House,North Indian,Metro,SMB,2025-11-24,2026-04-30
+ADV0145,Royal North Indian Bites,North Indian,Tier-1,SMB,2025-05-26,2025-10-15
+ADV0146,Golden Burgers Hub,Burgers,Tier-1,Mid,2025-03-13,
+ADV0147,Crispy Burgers Kitchen,Burgers,Metro,Chain,2025-05-24,
+ADV0148,Fresh North Indian Corner,North Indian,Metro,Mid,2025-10-26,
+ADV0149,Fresh Chinese Kitchen,Chinese,Tier-1,SMB,2025-09-24,
+ADV0150,Cloud Biryani House,Biryani,Tier-2,Mid,2025-01-24,
+ADV0151,Desi Beverages Express,Beverages,Metro,SMB,2025-08-29,2026-03-10
+ADV0152,Spice Healthy House,Healthy,Metro,Chain,2025-02-28,
+ADV0153,Urban Pizza Studio,Pizza,Metro,Mid,2025-02-09,
+ADV0154,Cloud North Indian Bites,North Indian,Tier-1,SMB,2025-02-04,2025-10-22
+ADV0155,Urban Biryani Co.,Biryani,Tier-1,SMB,2025-06-27,
+ADV0156,Tasty South Indian Express,South Indian,Metro,SMB,2025-07-24,
+ADV0157,Golden Burgers Express,Burgers,Metro,Chain,2025-12-20,
+ADV0158,Desi South Indian Bites,South Indian,Tier-2,SMB,2025-06-06,
+ADV0159,Golden Desserts Hub,Desserts,Metro,Mid,2026-02-06,
+ADV0160,Fresh Desserts House,Desserts,Tier-1,Mid,2025-11-13,2026-05-19
+ADV0161,Tasty Biryani Co.,Biryani,Tier-1,SMB,2025-08-28,2025-11-25
+ADV0162,Smoky Fast Food Co.,Fast Food,Metro,SMB,2026-04-09,
+ADV0163,Crispy Pizza House,Pizza,Metro,Chain,2025-05-01,
+ADV0164,Golden Biryani Co.,Biryani,Metro,SMB,2026-01-03,
+ADV0165,Spice North Indian Kitchen,North Indian,Tier-2,SMB,2025-03-21,
+ADV0166,Royal Chinese Bites,Chinese,Metro,Mid,2025-07-11,
+ADV0167,Desi Beverages Hub,Beverages,Metro,Mid,2025-10-04,
+ADV0168,Urban Beverages Kitchen,Beverages,Metro,Chain,2025-08-17,
+ADV0169,Cloud Burgers Kitchen,Burgers,Metro,SMB,2025-03-10,2026-03-08
+ADV0170,Crispy Fast Food House,Fast Food,Tier-1,SMB,2025-09-01,
+ADV0171,Spice Burgers Hub,Burgers,Metro,SMB,2025-09-24,2026-02-24
+ADV0172,Smoky North Indian Kitchen,North Indian,Tier-1,SMB,2026-04-23,
+ADV0173,Spice Burgers Hub,Burgers,Tier-1,SMB,2026-03-06,
+ADV0174,Urban Fast Food House,Fast Food,Tier-2,SMB,2025-09-05,2025-11-21
+ADV0175,Cloud Pizza Corner,Pizza,Metro,SMB,2025-10-25,
+ADV0176,Golden Biryani Corner,Biryani,Tier-2,SMB,2025-03-01,
+ADV0177,Cloud Chinese Hub,Chinese,Tier-1,SMB,2026-01-18,
+ADV0178,Spice Fast Food Hub,Fast Food,Metro,Mid,2026-04-11,
+ADV0179,Spice Healthy Kitchen,Healthy,Tier-1,Mid,2026-03-22,
+ADV0180,Desi Desserts Kitchen,Desserts,Tier-2,SMB,2025-04-13,2025-12-06
+ADV0181,Urban Healthy House,Healthy,Metro,SMB,2025-03-11,
+ADV0182,Urban Healthy Studio,Healthy,Tier-2,SMB,2025-09-10,
+ADV0183,Fresh North Indian Bites,North Indian,Tier-1,SMB,2025-12-19,
+ADV0184,Spice Burgers Bites,Burgers,Tier-1,SMB,2025-07-15,2026-03-10
+ADV0185,Royal Beverages Co.,Beverages,Tier-2,SMB,2025-10-17,
+ADV0186,Crispy South Indian Co.,South Indian,Metro,SMB,2025-08-16,2026-02-18
+ADV0187,Cloud Chinese Hub,Chinese,Tier-2,SMB,2026-04-10,
+ADV0188,Royal Biryani Studio,Biryani,Metro,SMB,2025-07-20,
+ADV0189,Royal Desserts Studio,Desserts,Tier-1,SMB,2025-08-15,
+ADV0190,Crispy Burgers Studio,Burgers,Tier-1,SMB,2025-08-29,2026-01-01
+ADV0191,Golden Fast Food Bites,Fast Food,Metro,Mid,2025-01-13,
+ADV0192,Tasty Pizza Corner,Pizza,Metro,Mid,2025-12-20,
+ADV0193,Tasty Biryani Studio,Biryani,Metro,Mid,2025-04-07,
+ADV0194,Crispy Beverages Studio,Beverages,Metro,SMB,2025-01-18,
+ADV0195,Crispy Pizza Hub,Pizza,Metro,Mid,2025-09-18,
+ADV0196,Royal Pizza Bites,Pizza,Metro,SMB,2025-12-11,
+ADV0197,Golden North Indian Kitchen,North Indian,Metro,SMB,2025-04-01,2026-02-06
+ADV0198,Cloud Healthy Bites,Healthy,Metro,Mid,2026-01-07,
+ADV0199,Golden Pizza Studio,Pizza,Tier-1,SMB,2026-02-28,
+ADV0200,Royal Burgers Kitchen,Burgers,Tier-1,SMB,2025-03-12,
+ADV0201,Urban Beverages Express,Beverages,Tier-1,Mid,2025-06-06,
+ADV0202,Tasty Fast Food Kitchen,Fast Food,Metro,Chain,2025-02-08,
+ADV0203,Desi North Indian Studio,North Indian,Tier-2,Chain,2026-03-20,
+ADV0204,Crispy Pizza Studio,Pizza,Tier-1,SMB,2026-01-04,
+ADV0205,Smoky Biryani Co.,Biryani,Metro,SMB,2025-05-18,
+ADV0206,Fresh Pizza Studio,Pizza,Metro,Mid,2026-03-20,
+ADV0207,Spice Biryani Kitchen,Biryani,Tier-1,SMB,2025-04-07,2025-09-10
+ADV0208,Crispy South Indian Hub,South Indian,Metro,Mid,2026-04-15,
+ADV0209,Cloud Biryani Corner,Biryani,Tier-1,SMB,2025-08-08,
+ADV0210,Smoky North Indian Kitchen,North Indian,Tier-2,SMB,2025-05-30,2026-01-16
+ADV0211,Desi Desserts Corner,Desserts,Metro,SMB,2025-06-25,
+ADV0212,Golden North Indian Hub,North Indian,Metro,Mid,2025-07-28,
+ADV0213,Cloud Pizza Corner,Pizza,Tier-2,SMB,2025-11-21,
+ADV0214,Smoky Beverages Corner,Beverages,Tier-1,SMB,2025-09-07,
+ADV0215,Royal Desserts Bites,Desserts,Metro,SMB,2025-11-01,2026-03-23
+ADV0216,Tasty Desserts Hub,Desserts,Tier-2,SMB,2025-05-02,
+ADV0217,Smoky Biryani Bites,Biryani,Tier-2,SMB,2025-06-29,2025-12-08
+ADV0218,Cloud Biryani Corner,Biryani,Tier-1,Mid,2026-04-14,
+ADV0219,Crispy Fast Food Hub,Fast Food,Tier-1,SMB,2025-04-29,
+ADV0220,Crispy Chinese Co.,Chinese,Metro,Mid,2025-10-24,
+ADV0221,Royal Burgers Corner,Burgers,Metro,Mid,2025-10-07,2025-12-23
+ADV0222,Golden North Indian Hub,North Indian,Tier-1,SMB,2025-03-13,2025-08-17
+ADV0223,Spice South Indian Co.,South Indian,Metro,SMB,2025-08-07,
+ADV0224,Royal Fast Food House,Fast Food,Tier-1,Mid,2025-06-17,
+ADV0225,Crispy Burgers Hub,Burgers,Tier-2,SMB,2025-11-06,
+ADV0226,Desi Fast Food Co.,Fast Food,Metro,SMB,2025-08-25,2026-05-27
+ADV0227,Fresh Biryani Corner,Biryani,Tier-1,Chain,2026-01-04,
+ADV0228,Golden North Indian Studio,North Indian,Metro,Chain,2025-10-06,
+ADV0229,Cloud South Indian Hub,South Indian,Tier-2,Mid,2025-08-26,2026-04-01
+ADV0230,Desi Biryani Bites,Biryani,Metro,SMB,2026-01-15,2026-04-08
+ADV0231,Royal Pizza Studio,Pizza,Tier-1,Mid,2025-08-22,
+ADV0232,Golden Chinese Bites,Chinese,Tier-1,Mid,2026-01-21,2026-04-27
+ADV0233,Fresh Fast Food Studio,Fast Food,Metro,SMB,2025-06-15,
+ADV0234,Tasty North Indian House,North Indian,Tier-1,Mid,2025-11-10,
+ADV0235,Cloud Fast Food Co.,Fast Food,Tier-1,SMB,2026-03-03,
+ADV0236,Fresh Beverages House,Beverages,Tier-1,SMB,2025-01-05,
+ADV0237,Urban North Indian Studio,North Indian,Tier-1,SMB,2026-02-19,
+ADV0238,Spice Beverages Co.,Beverages,Tier-2,SMB,2026-02-05,
+ADV0239,Spice Biryani Hub,Biryani,Metro,SMB,2025-01-28,
+ADV0240,Tasty Biryani Bites,Biryani,Tier-1,Mid,2025-08-21,
+ADV0241,Cloud Beverages Kitchen,Beverages,Metro,Chain,2026-02-03,
+ADV0242,Spice Beverages Co.,Beverages,Tier-1,SMB,2026-04-11,
+ADV0243,Spice Pizza Express,Pizza,Tier-1,Mid,2026-02-17,
+ADV0244,Urban North Indian Kitchen,North Indian,Metro,Chain,2025-08-27,
+ADV0245,Spice South Indian Co.,South Indian,Metro,SMB,2026-03-07,
+ADV0246,Tasty Healthy Studio,Healthy,Tier-2,SMB,2025-01-01,
+ADV0247,Royal South Indian Kitchen,South Indian,Metro,SMB,2025-12-27,
+ADV0248,Fresh Chinese Co.,Chinese,Tier-1,SMB,2025-11-29,
+ADV0249,Urban Chinese Hub,Chinese,Metro,Mid,2025-12-09,
+ADV0250,Royal Chinese Express,Chinese,Tier-2,SMB,2025-12-05,
+ADV0251,Spice South Indian Kitchen,South Indian,Metro,SMB,2025-06-09,
+ADV0252,Spice Healthy Bites,Healthy,Metro,SMB,2025-12-02,2026-01-27
+ADV0253,Urban Chinese Bites,Chinese,Tier-2,SMB,2025-06-28,
+ADV0254,Urban Pizza House,Pizza,Tier-2,Chain,2025-03-09,
+ADV0255,Urban Pizza Hub,Pizza,Metro,SMB,2025-09-23,2026-03-09
+ADV0256,Tasty Desserts Co.,Desserts,Tier-1,SMB,2025-04-13,
+ADV0257,Spice Beverages Express,Beverages,Tier-1,SMB,2025-01-11,2025-11-14
+ADV0258,Golden Biryani Corner,Biryani,Tier-2,SMB,2025-02-18,
+ADV0259,Golden Biryani House,Biryani,Metro,SMB,2025-12-03,
+ADV0260,Crispy North Indian Kitchen,North Indian,Tier-1,SMB,2025-11-23,
+ADV0261,Crispy Pizza Bites,Pizza,Tier-1,SMB,2025-03-20,2025-12-31
+ADV0262,Crispy Beverages Corner,Beverages,Tier-1,SMB,2025-11-06,2026-06-03
+ADV0263,Spice Burgers Studio,Burgers,Tier-1,Mid,2026-04-22,
+ADV0264,Urban Pizza Corner,Pizza,Tier-1,Mid,2025-03-31,2026-01-17
+ADV0265,Crispy Fast Food Bites,Fast Food,Metro,Mid,2025-02-08,2026-01-23
+ADV0266,Cloud Pizza Kitchen,Pizza,Tier-2,Mid,2025-12-28,
+ADV0267,Smoky Burgers Kitchen,Burgers,Tier-2,Mid,2025-09-12,
+ADV0268,Fresh Pizza Bites,Pizza,Tier-1,SMB,2025-09-08,2026-05-17
+ADV0269,Desi Biryani Bites,Biryani,Metro,SMB,2026-02-04,2026-05-16
+ADV0270,Spice Biryani Hub,Biryani,Metro,SMB,2025-06-24,
+ADV0271,Spice Biryani Hub,Biryani,Tier-1,SMB,2026-01-02,
+ADV0272,Desi Pizza Corner,Pizza,Metro,Mid,2025-07-16,
+ADV0273,Crispy Biryani Corner,Biryani,Tier-2,SMB,2025-06-04,
+ADV0274,Spice North Indian House,North Indian,Metro,Mid,2026-04-25,
+ADV0275,Fresh Desserts Bites,Desserts,Tier-1,Mid,2025-07-06,
+ADV0276,Smoky Chinese Hub,Chinese,Tier-2,SMB,2025-11-20,
+ADV0277,Golden Burgers Express,Burgers,Metro,Chain,2025-11-28,
+ADV0278,Desi North Indian Kitchen,North Indian,Metro,SMB,2026-03-30,
+ADV0279,Fresh Healthy Kitchen,Healthy,Tier-1,Mid,2025-04-15,
+ADV0280,Tasty Healthy Express,Healthy,Tier-1,SMB,2025-03-09,2025-08-25
+ADV0281,Tasty Biryani Hub,Biryani,Metro,SMB,2026-02-04,
+ADV0282,Fresh Pizza Express,Pizza,Tier-1,SMB,2025-01-19,
+ADV0283,Golden Pizza Kitchen,Pizza,Tier-2,SMB,2025-03-12,2026-01-08
+ADV0284,Crispy Pizza Bites,Pizza,Tier-1,SMB,2025-05-27,2025-12-08
+ADV0285,Smoky North Indian Express,North Indian,Metro,Chain,2025-04-02,
+ADV0286,Golden Chinese Bites,Chinese,Metro,Mid,2026-01-14,
+ADV0287,Golden Biryani House,Biryani,Metro,SMB,2026-02-13,2026-04-20
+ADV0288,Smoky Chinese Hub,Chinese,Metro,SMB,2026-02-23,
+ADV0289,Cloud North Indian Hub,North Indian,Metro,SMB,2025-04-26,
+ADV0290,Smoky Biryani Co.,Biryani,Tier-1,SMB,2025-11-08,
+ADV0291,Golden Beverages Hub,Beverages,Metro,Chain,2025-11-16,
+ADV0292,Smoky Biryani Kitchen,Biryani,Tier-2,SMB,2026-01-10,
+ADV0293,Golden Fast Food Hub,Fast Food,Metro,SMB,2025-08-28,2026-01-31
+ADV0294,Fresh Biryani Hub,Biryani,Metro,SMB,2026-03-18,
+ADV0295,Desi Healthy Corner,Healthy,Tier-1,SMB,2026-02-20,
+ADV0296,Tasty Fast Food House,Fast Food,Tier-2,SMB,2025-03-08,2026-04-09
+ADV0297,Desi Fast Food Hub,Fast Food,Metro,Mid,2025-01-24,
+ADV0298,Spice Beverages Express,Beverages,Metro,Mid,2025-10-14,2025-12-02
+ADV0299,Spice Beverages Corner,Beverages,Metro,Chain,2025-01-24,
+ADV0300,Urban South Indian Hub,South Indian,Tier-1,Mid,2026-01-18,

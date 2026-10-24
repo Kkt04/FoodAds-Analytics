@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.DS_Store
+# SQLite DB is rebuilt from the CSVs on every run
+data/*.db
