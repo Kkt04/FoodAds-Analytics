@@ -5,3 +5,4 @@ __pycache__/
 .DS_Store
 # SQLite DB is rebuilt from the CSVs on every run
 data/*.db
+.vercel
