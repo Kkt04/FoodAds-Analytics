@@ -1,0 +1,118 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$group": {
+      "_id": null,
+      "impressions": {
+        "$sum": "$impressions"
+      },
+      "clicks": {
+        "$sum": "$clicks"
+      },
+      "orders": {
+        "$sum": "$orders"
+      },
+      "spend": {
+        "$sum": "$spend"
+      },
+      "attributed_revenue": {
+        "$sum": "$attributed_revenue"
+      },
+      "advertisers": {
+        "$addToSet": "$c.advertiser_id"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "impressions": "$impressions",
+      "clicks": "$clicks",
+      "orders": "$orders",
+      "ad_revenue_inr": {
+        "$round": [
+          "$spend",
+          0
+        ]
+      },
+      "attributed_gmv_inr": {
+        "$round": [
+          "$attributed_revenue",
+          0
+        ]
+      },
+      "ctr_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$clicks",
+                  "$impressions"
+                ]
+              },
+              100
+            ]
+          },
+          3
+        ]
+      },
+      "cpm_inr": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$spend",
+                  "$impressions"
+                ]
+              },
+              1000
+            ]
+          },
+          1
+        ]
+      },
+      "click_to_order_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$orders",
+                  "$clicks"
+                ]
+              },
+              100
+            ]
+          },
+          2
+        ]
+      },
+      "roas": {
+        "$round": [
+          {
+            "$divide": [
+              "$attributed_revenue",
+              "$spend"
+            ]
+          },
+          2
+        ]
+      },
+      "advertisers_with_spend": {
+        "$size": "$advertisers"
+      }
+    }
+  }
+]

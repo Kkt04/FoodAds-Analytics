@@ -1,6 +1,6 @@
-placement,impressions,ad_revenue_inr,ctr_pct,cpm_inr,cost_per_click_inr,cost_per_order_inr,click_to_order_pct,roas
-Cart Page,122627098,92986633.0,6.396,758.3,11.85,53.9,21.98,5.8
-Category Listing,188030667,70446033.0,3.077,374.7,12.18,83.1,14.65,3.9
-Search Top,341621644,220805071.0,4.856,646.3,13.31,86.2,15.45,3.52
-Sponsored Carousel,157592574,51744273.0,2.137,328.3,15.37,119.3,12.88,2.18
-Home Banner,205832134,70808474.0,1.294,344.0,26.59,264.6,10.05,1.28
+impressions,placement,ad_revenue_inr,ctr_pct,cpm_inr,cost_per_click_inr,cost_per_order_inr,click_to_order_pct,roas
+122627098,Cart Page,92986633.0,6.396,758.3,11.85,53.9,21.98,5.8
+188030667,Category Listing,70446033.0,3.077,374.7,12.18,83.1,14.65,3.9
+341621644,Search Top,220805071.0,4.856,646.3,13.31,86.2,15.45,3.52
+157592574,Sponsored Carousel,51744273.0,2.137,328.3,15.37,119.3,12.88,2.18
+205832134,Home Banner,70808474.0,1.294,344.0,26.59,264.6,10.05,1.28

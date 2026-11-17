@@ -1,0 +1,31 @@
+[
+  {
+    "$match": {
+      "date": {
+        "$gte": "2026-04-01"
+      }
+    }
+  },
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$group": {
+      "_id": "$c.placement",
+      "impressions": {
+        "$sum": "$impressions"
+      },
+      "spend": {
+        "$sum": "$spend"
+      }
+    }
+  }
+]

@@ -2,7 +2,8 @@
 
 Crafted with a human-designed enterprise analytics UI (Stripe/Datadog inspired),
 complete with interactive tabs, live scenario calculator, real-time segment search/sort,
-advertiser risk inspector, and publication-quality chart embeds.
+advertiser risk inspector, publication-quality chart embeds, in-dashboard Executive Memo
+and Documentation modal dialog boxes, and powered by MongoDB.
 """
 from __future__ import annotations
 
@@ -11,7 +12,9 @@ import base64
 import html
 import json
 from pathlib import Path
+from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from src import config
@@ -35,20 +38,33 @@ def _img_base64(name: str) -> str:
     return "data:image/png;base64," + base64.b64encode(data).decode()
 
 
+def _clean_records(df: pd.DataFrame) -> list[dict[str, Any]]:
+    """Clean DataFrame so all NaNs, Infs are replaced with None (valid JSON null)."""
+    df_clean = df.replace({np.nan: None, np.inf: None, -np.inf: None})
+    records = df_clean.to_dict(orient="records")
+    for r in records:
+        for k, v in r.items():
+            if pd.isna(v) or v is None:
+                r[k] = None
+    return records
+
+
 def run(verbose: bool = True) -> str:
     # 1. Load data tables
-    kpis = pd.read_csv(config.TABLE_DIR / "01_overall_kpis.csv").iloc[0].to_dict()
-    monthly = pd.read_csv(config.TABLE_DIR / "02_monthly_trend.csv").to_dict(orient="records")
-    category = pd.read_csv(config.TABLE_DIR / "03_category_performance.csv").to_dict(orient="records")
-    placement = pd.read_csv(config.TABLE_DIR / "04_placement_performance.csv").to_dict(orient="records")
-    fill = pd.read_csv(config.TABLE_DIR / "05_inventory_fill_rate.csv").to_dict(orient="records")
-    segments = pd.read_csv(config.TABLE_DIR / "06_advertiser_segments.csv").to_dict(orient="records")
-    cohorts = pd.read_csv(config.TABLE_DIR / "07_retention_cohorts.csv").to_dict(orient="records")
-    ranking = pd.read_csv(config.TABLE_DIR / "08_advertiser_ranking.csv").to_dict(orient="records")
-    seg_actions = pd.read_csv(config.TABLE_DIR / "09_segments_to_grow_or_fix.csv").to_dict(orient="records")
-    opp_inputs = pd.read_csv(config.TABLE_DIR / "10_opportunity_inputs.csv").to_dict(orient="records")
-    ab_summary = pd.read_csv(config.TABLE_DIR / "ab_test_summary.csv").to_dict(orient="records")
-    opp_sizing = pd.read_csv(config.TABLE_DIR / "opportunity_sizing.csv").to_dict(orient="records")
+    raw_kpis = pd.read_csv(config.TABLE_DIR / "01_overall_kpis.csv").iloc[0].to_dict()
+    kpis = {k: (None if pd.isna(v) else v) for k, v in raw_kpis.items()}
+
+    monthly = _clean_records(pd.read_csv(config.TABLE_DIR / "02_monthly_trend.csv"))
+    category = _clean_records(pd.read_csv(config.TABLE_DIR / "03_category_performance.csv"))
+    placement = _clean_records(pd.read_csv(config.TABLE_DIR / "04_placement_performance.csv"))
+    fill = _clean_records(pd.read_csv(config.TABLE_DIR / "05_inventory_fill_rate.csv"))
+    segments = _clean_records(pd.read_csv(config.TABLE_DIR / "06_advertiser_segments.csv"))
+    cohorts = _clean_records(pd.read_csv(config.TABLE_DIR / "07_retention_cohorts.csv"))
+    ranking = _clean_records(pd.read_csv(config.TABLE_DIR / "08_advertiser_ranking.csv"))[:100]
+    seg_actions = _clean_records(pd.read_csv(config.TABLE_DIR / "09_segments_to_grow_or_fix.csv"))
+    opp_inputs = _clean_records(pd.read_csv(config.TABLE_DIR / "10_opportunity_inputs.csv"))
+    ab_summary = _clean_records(pd.read_csv(config.TABLE_DIR / "ab_test_summary.csv"))
+    opp_sizing = _clean_records(pd.read_csv(config.TABLE_DIR / "opportunity_sizing.csv"))
     ab_meta = json.loads((config.REPORT_DIR / "ab_test_result.json").read_text())
 
     # Pre-render chart images map
@@ -63,20 +79,21 @@ def run(verbose: bool = True) -> str:
         "fill": fill,
         "segments": segments,
         "cohorts": cohorts,
-        "ranking": ranking[:100],  # top 100 for client-side inspector
+        "ranking": ranking,
         "seg_actions": seg_actions,
         "opp_inputs": opp_inputs,
         "ab_summary": ab_summary,
         "opp_sizing": opp_sizing,
         "ab_meta": ab_meta,
     }
-    json_payload = json.dumps(app_data)
+    json_payload = json.dumps(app_data, default=str)
 
     # Derived headline figures
     rev_cr = kpis["ad_revenue_inr"] / 1e7
     gmv_cr = kpis["attributed_gmv_inr"] / 1e7
     impr_b = kpis["impressions"] / 1e9
-    base_opp_lakhs = (pd.DataFrame(opp_sizing).query("scenario == 'Base'")["incremental_revenue_3m"].sum()) / 1e5
+    opp_df = pd.DataFrame(opp_sizing)
+    base_opp_lakhs = (opp_df[opp_df["scenario"] == "Base"]["incremental_revenue_3m"].sum()) / 1e5
     base_opp_cr = base_opp_lakhs / 100
 
     html_content = f"""<!DOCTYPE html>
@@ -84,7 +101,7 @@ def run(verbose: bool = True) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FoodAds Intelligence Console | Marketplace Economics & Experimentation</title>
+  <title>FoodAds Intelligence Console | Marketplace Economics & Experimentation (MongoDB)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -93,7 +110,7 @@ def run(verbose: bool = True) -> str:
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-      /* Light Theme (default fallback) */
+      /* Light Theme */
       --bg-canvas: #f8fafc;
       --bg-surface: #ffffff;
       --bg-surface-elevated: #ffffff;
@@ -186,16 +203,16 @@ def run(verbose: bool = True) -> str:
     }}
 
     .brand-logo {{
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
       background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-weight: 800;
-      font-size: 16px;
+      font-size: 17px;
       box-shadow: 0 2px 8px var(--brand-glow);
     }}
 
@@ -238,6 +255,13 @@ def run(verbose: bool = True) -> str:
       background: var(--status-success-bg);
       color: var(--status-success);
       border: 1px solid var(--status-success-border);
+    }}
+
+    .pill-mongo {{
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-family: var(--font-mono);
     }}
 
     .top-actions {{
@@ -713,7 +737,7 @@ def run(verbose: bool = True) -> str:
       line-height: 1.5;
     }}
 
-    /* Modal for charts */
+    /* Generic Modal Box */
     .modal-overlay {{
       display: none;
       position: fixed;
@@ -721,18 +745,137 @@ def run(verbose: bool = True) -> str:
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 999;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1000;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 20px;
+      backdrop-filter: blur(4px);
     }}
 
     .modal-overlay.open {{
       display: flex;
     }}
 
-    .modal-content {{
+    .modal-box {{
+      width: 100%;
+      max-width: 860px;
+      max-height: 85vh;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }}
+
+    @keyframes modalFadeIn {{
+      from {{ transform: scale(0.97); opacity: 0; }}
+      to {{ transform: scale(1); opacity: 1; }}
+    }}
+
+    .modal-box-header {{
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }}
+
+    .modal-box-title {{
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+
+    .modal-box-close {{
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }}
+
+    .modal-box-close:hover {{
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+    }}
+
+    .modal-box-body {{
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--text-primary);
+    }}
+
+    .modal-box-body h2 {{
+      font-size: 17px;
+      margin: 20px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }}
+
+    .modal-box-body h3 {{
+      font-size: 15px;
+      margin: 16px 0 8px;
+      color: var(--text-primary);
+    }}
+
+    .modal-box-body p {{
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+    }}
+
+    .modal-box-body ul, .modal-box-body ol {{
+      margin-left: 20px;
+      margin-bottom: 14px;
+      color: var(--text-secondary);
+    }}
+
+    .modal-box-body li {{
+      margin-bottom: 6px;
+    }}
+
+    .modal-box-body table {{
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+    }}
+
+    .modal-box-body th, .modal-box-body td {{
+      padding: 8px 12px;
+      border: 1px solid var(--border-subtle);
+      text-align: left;
+    }}
+
+    .modal-box-body th {{
+      background: var(--bg-subtle);
+      font-weight: 600;
+    }}
+
+    .modal-box-body blockquote {{
+      border-left: 4px solid var(--brand-primary);
+      background: var(--bg-subtle);
+      padding: 10px 16px;
+      border-radius: 4px;
+      margin: 14px 0;
+      color: var(--text-primary);
+    }}
+
+    /* Image zoom modal */
+    .image-modal-content {{
       max-width: 95vw;
       max-height: 90vh;
       background: var(--bg-surface);
@@ -743,31 +886,31 @@ def run(verbose: bool = True) -> str:
       flex-direction: column;
     }}
 
-    .modal-content img {{
+    .image-modal-content img {{
       max-width: 100%;
       max-height: 80vh;
       object-fit: contain;
     }}
 
-    .modal-close {{
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(0,0,0,0.6);
-      color: #fff;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+    /* Dedicated Documentation Section */
+    .docs-section {{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 40px;
+    }}
+
+    .docs-section h2 {{
       font-size: 18px;
-      cursor: pointer;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
     }}
 
     footer {{
-      margin-top: 40px;
+      margin-top: 30px;
       padding-top: 20px;
       border-top: 1px solid var(--border-subtle);
       color: var(--text-muted);
@@ -796,7 +939,7 @@ def run(verbose: bool = True) -> str:
     </div>
 
     <div class="top-actions">
-      <span class="pill-badge pill-success">● System Operational</span>
+      <span class="pill-badge pill-success">Active (foodads)</span>
       <button class="theme-toggle" id="themeToggleBtn" title="Toggle Light/Dark Theme">
         <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="5"></circle>
@@ -810,8 +953,8 @@ def run(verbose: bool = True) -> str:
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
       </button>
-      <a href="../docs/INSIGHTS_MEMO.md" target="_blank" class="btn">Executive Memo</a>
-      <a href="../README.md" target="_blank" class="btn btn-primary">Documentation</a>
+      <button class="btn" onclick="openMemoModal()">Executive Memo</button>
+      <button class="btn btn-primary" onclick="openDocsModal()">Documentation</button>
     </div>
   </header>
 
@@ -821,7 +964,7 @@ def run(verbose: bool = True) -> str:
     <!-- Strategic Context Banner -->
     <div class="context-banner">
       <div class="context-banner-text">
-        <strong>Marketplace Note:</strong> This intelligence console analyzes a synthetic 3-sided food delivery ad platform.
+        <strong>Marketplace Note:</strong> This intelligence console analyzes a synthetic 3-sided food delivery ad platform backed by <strong>MongoDB Aggregation Pipelines</strong>.
         Ad revenue reached <strong>INR {rev_cr:.1f} Cr</strong> driven by a 5.6x expansion in advertisers and traffic, while merchant ROAS remained pegged at <strong>{kpis['roas']:.2f}x</strong>.
       </div>
       <div>
@@ -831,12 +974,12 @@ def run(verbose: bool = True) -> str:
 
     <!-- Navigation Tabs -->
     <nav class="tab-nav">
-      <button class="tab-btn active" data-tab="tab-overview">📊 Executive P&amp;L</button>
-      <button class="tab-btn" data-tab="tab-inventory">🎯 Inventory &amp; Yield</button>
-      <button class="tab-btn" data-tab="tab-segments">🍱 Category &amp; Segments</button>
-      <button class="tab-btn" data-tab="tab-retention">🔄 Retention &amp; Churn</button>
-      <button class="tab-btn" data-tab="tab-abtest">🧪 A/B Experiments</button>
-      <button class="tab-btn" data-tab="tab-simulator">🧮 Opportunity Simulator</button>
+      <button class="tab-btn active" data-tab="tab-overview" onclick="switchTab('tab-overview', this)">Executive P&amp;L</button>
+      <button class="tab-btn" data-tab="tab-inventory" onclick="switchTab('tab-inventory', this)">Inventory &amp; Yield</button>
+      <button class="tab-btn" data-tab="tab-segments" onclick="switchTab('tab-segments', this)">Category &amp; Segments</button>
+      <button class="tab-btn" data-tab="tab-retention" onclick="switchTab('tab-retention', this)">Retention &amp; Churn</button>
+      <button class="tab-btn" data-tab="tab-abtest" onclick="switchTab('tab-abtest', this)">A/B Experiments</button>
+      <button class="tab-btn" data-tab="tab-simulator" onclick="switchTab('tab-simulator', this)">Opportunity Simulator</button>
     </nav>
 
     <!-- TAB 1: EXECUTIVE OVERVIEW -->
@@ -912,7 +1055,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['01_monthly_trend']}" alt="Monthly Trend">
             <div class="chart-caption">
               <span><b>Finding:</b> Revenue scaled 5.6x due to merchant and traffic growth; ROAS remained constant (~3.54x).</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -926,17 +1069,17 @@ def run(verbose: bool = True) -> str:
           </div>
 
           <div class="insight-card" style="border-left-color: #ef4444;">
-            <h4>🚨 The Low-AOV Beverage/Dessert Trap</h4>
+            <h4>The Low-AOV Beverage/Dessert Trap</h4>
             <p>Beverages (1.09x ROAS) and Desserts (1.64x ROAS) consume <strong>23% of total ad spend</strong>. Because basket sizes are low (₹140-190), fixed click costs wipe out restaurant contribution margins.</p>
           </div>
 
           <div class="insight-card" style="border-left-color: #10b981;">
-            <h4>💎 Cart Page: Premium Monetization Lever</h4>
+            <h4>Cart Page: Premium Monetization Lever</h4>
             <p>Cart Page delivers the marketplace's highest return (<strong>5.80x ROAS</strong>) with a 22% conversion rate, yet remains <strong>24% unsold</strong>. A prime upsell target for high-AOV cuisine partners.</p>
           </div>
 
           <div class="insight-card" style="border-left-color: #3b82f6;">
-            <h4>📈 Search Top Hits Capacity Ceiling</h4>
+            <h4>Search Top Hits Capacity Ceiling</h4>
             <p>Search Top is <strong>90% filled</strong> across all days. Additional volume cannot be sold without degrading user search experience. The revenue growth lever here is <em>floor price optimization</em>, not volume.</p>
           </div>
         </div>
@@ -973,7 +1116,7 @@ def run(verbose: bool = True) -> str:
                 <td>{m['ctr_pct']:.2f}%</td>
                 <td>₹{m['cpm_inr']:.1f}</td>
                 <td>₹{m['ad_revenue_inr']/1e7:.2f} Cr</td>
-                <td><span class="badge-delta {'badge-pos' if str(m['ad_revenue_mom_pct']) != 'nan' and m['ad_revenue_mom_pct'] > 0 else ''}">{f"+{m['ad_revenue_mom_pct']:.1f}%" if str(m['ad_revenue_mom_pct']) != 'nan' else '—'}</span></td>
+                <td><span class="badge-delta {'badge-pos' if m.get('ad_revenue_mom_pct') is not None and m['ad_revenue_mom_pct'] > 0 else ''}">{f"+{m['ad_revenue_mom_pct']:.1f}%" if m.get('ad_revenue_mom_pct') is not None else '—'}</span></td>
                 <td><strong>{m['roas']:.2f}x</strong></td>
                 <td>{m['active_advertisers']}</td>
               </tr>''' for m in monthly])}
@@ -997,7 +1140,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['03_placement_roas_fill']}" alt="ROAS vs Fill">
             <div class="chart-caption">
               <span><b>Opportunity:</b> Cart Page delivers 5.8x ROAS with 24% capacity unmonetized.</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -1013,7 +1156,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['04_fill_rate_trend']}" alt="Fill Rate Trend">
             <div class="chart-caption">
               <span><b>Trend:</b> Steady ramp across H1 followed by plateauing fill in H2.</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -1076,7 +1219,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['02_category_roas']}" alt="Category ROAS">
             <div class="chart-caption">
               <span><b>Contrast:</b> Biryani (5.64x) vs Beverages (1.09x) highlights the AOV divide.</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -1092,7 +1235,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['06_segment_heatmap']}" alt="Segment Heatmap">
             <div class="chart-caption">
               <span><b>Geography:</b> Tier-2 cities exhibit severe ROAS degradation for low-order-value cuisines.</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -1159,7 +1302,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['05_retention_heatmap']}" alt="Retention Heatmap">
             <div class="chart-caption">
               <span><b>Finding:</b> Retention is ~95% at Month 3, dropping to ~86% by Month 6.</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -1173,17 +1316,17 @@ def run(verbose: bool = True) -> str:
           </div>
 
           <div class="insight-card" style="border-left-color: #ef4444;">
-            <h4>⚠️ SMB Merchants Experience 10x Churn Risk</h4>
+            <h4>SMB Merchants Experience 10x Churn Risk</h4>
             <p><strong>31% of SMB advertisers churned</strong> during the period, compared to only <strong>14% of Mid-tier</strong> and <strong>3% of Enterprise Chains</strong>. SMB budgets are fragile to initial week performance volatility.</p>
           </div>
 
           <div class="insight-card" style="border-left-color: #f59e0b;">
-            <h4>📉 The Month-3 Retention Cliff</h4>
+            <h4>The Month-3 Retention Cliff</h4>
             <p>Advertiser churn accelerates between Month 3 and Month 6. Onboarding support must proactively audit bids and creative before the Day-90 mark to prevent silent budget depletion.</p>
           </div>
 
           <div class="insight-card" style="border-left-color: #10b981;">
-            <h4>🛡️ Strategic Recommendation: Automated Floor Shields</h4>
+            <h4>Strategic Recommendation: Automated Floor Shields</h4>
             <p>Implement algorithmic bid adjustments for first-time SMB campaigns to guarantee minimum ROAS thresholds and prevent early flight abandonment.</p>
           </div>
         </div>
@@ -1284,7 +1427,7 @@ def run(verbose: bool = True) -> str:
             <img src="{chart_imgs['07_ab_test_ctr']}" alt="A/B Test CTR">
             <div class="chart-caption">
               <span><b>Confidence:</b> Statistically significant lift (p = 0.0001, alpha = 0.05).</span>
-              <span>🔍 Zoom</span>
+              <span>Zoom</span>
             </div>
           </div>
         </div>
@@ -1384,10 +1527,164 @@ def run(verbose: bool = True) -> str:
       </div>
     </section>
 
-    <!-- Modal for chart zoom -->
+    <!-- DEDICATED DOCUMENTATION BOX AT BOTTOM -->
+    <section id="documentation" class="docs-section">
+      <h2>FoodAds Architecture &amp; Methodology Reference</h2>
+      <p style="color:var(--text-secondary);margin-bottom:16px;">
+        Complete platform documentation covering database architecture (MongoDB aggregation pipelines), unit economics, experimental design, and metrics.
+      </p>
+
+      <div class="grid-halves" style="margin-bottom:16px;">
+        <div class="insight-card" style="border-left-color:var(--brand-primary);">
+          <h4>MongoDB Analytics Pipeline Suite</h4>
+          <p>The platform executes 10 production MongoDB aggregation pipelines stored in <code>mongo/*.json</code>. Raw CSVs are ingested into typed collections: <code>advertisers</code>, <code>campaigns</code>, <code>daily_performance</code>, <code>inventory</code>, and <code>ab_test_users</code>.</p>
+        </div>
+        <div class="insight-card" style="border-left-color:var(--status-success);">
+          <h4>Hypothesis Testing Framework</h4>
+          <p>Two-proportion pooled z-tests evaluate rate lifts (CTR, CVR) while Welch's t-test guards continuous spend. Enforces an automated decision rule: <strong>SHIP</strong>, <strong>RAMP CAUTIOUSLY</strong>, <strong>HOLD</strong>, or <strong>DO NOT SHIP</strong>.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Pipeline</th>
+              <th>Business Question</th>
+              <th>MongoDB Aggregation Operator</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>01_overall_kpis</code></td><td>Topline Ads P&amp;L</td><td><code>$lookup, $group, $project ($round, $divide, $multiply)</code></td></tr>
+            <tr><td><code>02_monthly_trend</code></td><td>Month-over-month growth pacing</td><td><code>$project ($substr), $group, $sort, pandas pct_change</code></td></tr>
+            <tr><td><code>03_category_performance</code></td><td>Category efficiency &amp; spend share</td><td><code>$lookup, $group, $project, spend share rank</code></td></tr>
+            <tr><td><code>04_placement_performance</code></td><td>Ad slot yield &amp; conversion rates</td><td><code>$lookup campaigns, $group placement, CPC/CPO projection</code></td></tr>
+            <tr><td><code>05_inventory_fill_rate</code></td><td>Capacity saturation &amp; utilization</td><td><code>$lookup inventory, daily capacity calculation, utilization threshold</code></td></tr>
+            <tr><td><code>06_advertiser_segments</code></td><td>Merchant size vs. city tier returns</td><td><code>$lookup, $group by advertiser_size and city_tier</code></td></tr>
+            <tr><td><code>07_retention_cohorts</code></td><td>Monthly advertiser churn decay</td><td><code>$lookup, min active month cohort grouping, tenure delta</code></td></tr>
+            <tr><td><code>08_advertiser_ranking</code></td><td>Merchant spend &amp; risk quartiles</td><td><code>$group advertiser, spend rank, category ROAS quartile</code></td></tr>
+            <tr><td><code>09_segments_to_grow_or_fix</code></td><td>Actionable segment matrix (FIX/GROW)</td><td><code>$group category x tier, benchmark comparison to overall ROAS</code></td></tr>
+            <tr><td><code>10_opportunity_inputs</code></td><td>Trailing 90-day sizing inputs</td><td><code>$match date >= 90 days, $lookup inventory, CPM and fill rates</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MODAL 1: EXECUTIVE MEMO BOX -->
+    <div id="memoModal" class="modal-overlay" onclick="closeMemoModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-box-header">
+          <div class="modal-box-title">
+            <span>Executive Insights Memo: Ads Marketplace Strategy</span>
+          </div>
+          <button class="modal-box-close" onclick="closeMemoModal()">&times;</button>
+        </div>
+        <div class="modal-box-body">
+          <blockquote>
+            <strong>To:</strong> Ads Leadership &amp; Commercial Operations | <strong>From:</strong> Marketplace Strategy &amp; Revenue Analytics<br>
+            <strong>Period:</strong> Jul 2025 - Jun 2026 | <strong>Backend:</strong> MongoDB <code>foodads</code> Aggregations (Seed 42)
+          </blockquote>
+
+          <h2>1. Executive Summary: The P&amp;L Paradox</h2>
+          <p>
+            Over the 12-month period, top-line platform ad revenue grew from <strong>INR 1.12 Cr/month (Jul 2025)</strong> to <strong>INR 6.32 Cr/month (Jun 2026)</strong>—a <strong>5.6x expansion (+472% YoY)</strong>, totaling <strong>INR 50.68 Cr</strong> with <strong>INR 179.54 Cr in attributed GMV</strong>.
+          </p>
+          <p>
+            However, our diagnostic shows that <strong>the growth is 100% volume-driven while ROAS remained completely flat at 3.54x</strong>. More critically, <strong>28.2% of ad revenue (₹14.3 Cr) sits in category-tier segments with ROAS &lt;70% of marketplace average (&lt;2.48x)</strong>. In low-AOV cuisines like Beverages (1.09x ROAS), merchants are losing money on every order once food costs (32%) and commissions (22%) are deducted.
+          </p>
+
+          <h2>2. Strategic Diagnostic Findings</h2>
+          <h3>Finding 1: The "Low-AOV Trap" (Beverages &amp; Desserts)</h3>
+          <p>
+            Returns diverge by 5.1x across cuisines: Biryani leads at <strong>5.64x ROAS</strong> and North Indian at <strong>5.01x</strong>, while Beverages stagnates at <strong>1.09x</strong> and Desserts at <strong>1.64x</strong>. Clicks are not the problem (Beverages has high CTR of 3.83%), but because basket size is low (₹140 vs ₹380 for Biryani), fixed click costs (₹129 CPA) wipe out merchant gross margins.
+          </p>
+
+          <h3>Finding 2: Placement Yield Disparity (Cart Page vs. Home Banner)</h3>
+          <p>
+            <strong>Cart Page</strong> delivers our highest ROAS (<strong>5.80x</strong>), highest conversion (<strong>21.98%</strong>), and lowest CPA (<strong>₹53.90</strong>), yet remains <strong>24% unsold</strong>. Conversely, <strong>Home Banner</strong> underperforms at <strong>1.30x ROAS</strong> and ₹265 CPA (5x worse than Cart Page), while <strong>Search Top is at 90% capacity saturation</strong>.
+          </p>
+
+          <h3>Finding 3: The SMB Churn Cliff</h3>
+          <p>
+            Retention is stable through month 3 (~95%), but drops to 86% by month 6 and 72% by month 9. <strong>SMB merchants suffer 31.1% churn</strong>—10x worse than Enterprise Chains (3.0%).
+          </p>
+
+          <h3>Finding 4: Bestseller Badge Experiment</h3>
+          <p>
+            A/B test on 60,000 users confirmed a <strong>+18.2% relative lift in CTR (p = 0.0001)</strong> and <strong>+27.6% orders/user (p = 0.0235)</strong> with zero guardrail regression. Verdict: <strong>SHIP TO PRODUCTION</strong>.
+          </p>
+
+          <h2>3. Operational Playbook &amp; Recommendations</h2>
+          <table>
+            <thead>
+              <tr><th>#</th><th>Initiative</th><th>Action</th><th>Financial Impact</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><strong>Cart Page Blitz</strong></td><td>Monetize unsold Cart Page inventory for cuisines with AOV &gt; ₹300.</td><td>+₹20.4 L / quarter</td></tr>
+              <tr><td>2</td><td><strong>Low-AOV Shield</strong></td><td>Mandate minimum order size thresholds or meal combos for beverage ads.</td><td>Protects ₹14.3 Cr annual ad spend</td></tr>
+              <tr><td>3</td><td><strong>Search Top Floor Pricing</strong></td><td>Raise reserve CPM floors by 12% during peak dinner hours in Metro cities.</td><td>+₹35.0 L / quarter</td></tr>
+              <tr><td>4</td><td><strong>Home Banner Repositioning</strong></td><td>Discount reserve CPM by 25% and restrict to brand awareness launches.</td><td>+₹19.2 L / quarter</td></tr>
+              <tr><td>5</td><td><strong>SMB Guardrail Alerts</strong></td><td>Deploy algorithmic bid throttles if SMB ROAS falls below 2.0x in first 14 days.</td><td>Cut SMB churn from 31% to &lt;20%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: DOCUMENTATION BOX -->
+    <div id="docsModal" class="modal-overlay" onclick="closeDocsModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-box-header">
+          <div class="modal-box-title">
+            <span>FoodAds Technical Architecture &amp; Methodology</span>
+          </div>
+          <button class="modal-box-close" onclick="closeDocsModal()">&times;</button>
+        </div>
+        <div class="modal-box-body">
+          <h2>1. Database Architecture (MongoDB Aggregation Framework)</h2>
+          <p>
+            The platform relies on a normalized MongoDB 8.0 schema running on <code>localhost:27017</code>. Collections are indexed on compound keys for optimal query execution:
+          </p>
+          <ul>
+            <li><code>advertisers</code>: 300 documents (indexed by <code>advertiser_id</code>, <code>category</code>, <code>city_tier</code>).</li>
+            <li><code>campaigns</code>: 448 documents (indexed by <code>campaign_id</code>, <code>advertiser_id</code>, <code>placement</code>).</li>
+            <li><code>daily_performance</code>: 86,170 documents (indexed by <code>campaign_id + date</code>).</li>
+            <li><code>inventory</code>: 1,825 documents (indexed by <code>date + placement</code>).</li>
+            <li><code>ab_test_users</code>: 60,000 documents (indexed by <code>variant</code>).</li>
+          </ul>
+
+          <h2>2. Statistical Formulation for A/B Testing</h2>
+          <p>
+            Primary metrics (CTR, conversion rates) use a two-proportion pooled z-test:
+          </p>
+          <blockquote>
+            z = (p_T - p_C) / sqrt( p_pool * (1 - p_pool) * (1/n_T + 1/n_C) )<br>
+            95% CI = (p_T - p_C) ± 1.96 * sqrt( p_T*(1-p_T)/n_T + p_C*(1-p_C)/n_C )
+          </blockquote>
+          <p>
+            Continuous spend guardrails evaluate user revenue via Welch's two-sample t-test without assuming equal variances.
+          </p>
+
+          <h2>3. Opportunity Sizing Methodology</h2>
+          <p>
+            Unsold inventory upside models capacity expansion over the trailing 90 days with price elasticity decay:
+          </p>
+          <blockquote>
+            Incremental Revenue = Capacity_3M * ΔFillRate * CPM_current * (1 - DiscountRate) / 1000
+          </blockquote>
+          <ul>
+            <li><strong>Conservative:</strong> +3 pp fill uplift, 40% marginal price discount (+₹37.6 L / quarter).</li>
+            <li><strong>Base Case:</strong> +6 pp fill uplift, 25% marginal price discount (+₹81.6 L / quarter).</li>
+            <li><strong>Optimistic:</strong> +10 pp fill uplift, 10% marginal price discount (+₹152.0 L / quarter).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: CHART ZOOM -->
     <div id="chartModal" class="modal-overlay" onclick="closeChartModal()">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeChartModal()">&times;</button>
+      <div class="image-modal-content" onclick="event.stopPropagation()">
+        <button class="modal-box-close" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);color:#fff;" onclick="closeChartModal()">&times;</button>
         <img id="modalImg" src="" alt="Zoomed Chart">
         <div style="padding:14px;background:var(--bg-surface);font-weight:600;font-size:14px;" id="modalCaption"></div>
       </div>
@@ -1395,8 +1692,8 @@ def run(verbose: bool = True) -> str:
 
     <!-- Footer -->
     <footer>
-      <div>FoodAds Analytics Engine · Production Release · Built for Marketplace Strategy &amp; Revenue Operations</div>
-      <div>Methodology: 10 Relational SQL Pipelines · Two-Proportion Z-Test Engine · Scenario Monetization Model</div>
+      <div>FoodAds Analytics Engine · Production Release · Powered by MongoDB Aggregations</div>
+      <div>Methodology: 10 MongoDB Aggregation Pipelines · Two-Proportion Z-Test Engine · Scenario Monetization Model</div>
     </footer>
 
   </main>
@@ -1408,58 +1705,113 @@ def run(verbose: bool = True) -> str:
 
   <!-- Interactive Dashboard Controller -->
   <script>
-    const APP_DATA = JSON.parse(document.getElementById('app-data').textContent);
-
-    // 1. Tab Navigation
-    document.querySelectorAll('.tab-btn').forEach(btn => {{
-      btn.addEventListener('click', () => {{
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+    // 1. Tab Switching Function (Global & Inline Support)
+    function switchTab(tabId, btn) {{
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+      if (btn) {{
         btn.classList.add('active');
-        const targetId = btn.getAttribute('data-tab');
-        document.getElementById(targetId).style.display = 'block';
-      }});
-    }});
+      }} else {{
+        const matched = document.querySelector(`.tab-btn[data-tab="${{tabId}}"]`);
+        if (matched) matched.classList.add('active');
+      }}
+      const target = document.getElementById(tabId);
+      if (target) {{
+        target.style.display = 'block';
+      }}
+    }}
+
+    // Safe JSON Data Retrieval
+    let APP_DATA = {{}};
+    try {{
+      APP_DATA = JSON.parse(document.getElementById('app-data').textContent);
+    }} catch(e) {{
+      console.error('Error parsing APP_DATA:', e);
+    }}
 
     // 2. Theme Toggle
     const themeBtn = document.getElementById('themeToggleBtn');
-    themeBtn.addEventListener('click', () => {{
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('foodads-theme', next);
-    }});
-    const savedTheme = localStorage.getItem('foodads-theme');
-    if (savedTheme) {{
-      document.documentElement.setAttribute('data-theme', savedTheme);
+    if (themeBtn) {{
+      themeBtn.addEventListener('click', () => {{
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('foodads-theme', next);
+      }});
+      const savedTheme = localStorage.getItem('foodads-theme');
+      if (savedTheme) {{
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }}
     }}
 
-    // 3. Segments Table Filter & Render
+    // 3. Modal Box Controls
+    function openMemoModal() {{
+      document.getElementById('memoModal').classList.add('open');
+    }}
+    function closeMemoModal() {{
+      document.getElementById('memoModal').classList.remove('open');
+    }}
+
+    function openDocsModal() {{
+      document.getElementById('docsModal').classList.add('open');
+    }}
+    function closeDocsModal() {{
+      document.getElementById('docsModal').classList.remove('open');
+    }}
+
+    function openChartModal(chartKey, title) {{
+      const chartMap = {{
+        {"".join([f"'{name}': '{_img_base64(name)}',\n" for name, _, _ in CHARTS])}
+      }};
+      document.getElementById('modalImg').src = chartMap[chartKey] || '';
+      document.getElementById('modalCaption').textContent = title;
+      document.getElementById('chartModal').classList.add('open');
+    }}
+    function closeChartModal() {{
+      document.getElementById('chartModal').classList.remove('open');
+    }}
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', (e) => {{
+      if (e.key === 'Escape') {{
+        closeMemoModal();
+        closeDocsModal();
+        closeChartModal();
+      }}
+    }});
+
+    // 4. Segments Table Filter & Render
     function renderSegmentsTable(data) {{
       const tbody = document.getElementById('segmentsBody');
+      if (!tbody) return;
       tbody.innerHTML = data.map(r => `
         <tr>
           <td><strong>${{r.category}}</strong></td>
           <td>${{r.city_tier}}</td>
           <td>${{r.advertisers}}</td>
-          <td>₹${{(r.spend / 1e5).toFixed(1)}} L</td>
-          <td><strong>${{r.roas.toFixed(2)}}x</strong></td>
-          <td>${{r.roas_vs_overall.toFixed(2)}}x</td>
+          <td>₹${{((r.spend || 0) / 1e5).toFixed(1)}} L</td>
+          <td><strong>${{(r.roas || 0).toFixed(2)}}x</strong></td>
+          <td>${{(r.roas_vs_overall || 0).toFixed(2)}}x</td>
           <td><span class="action-badge action-${{r.action}}">${{r.action}}</span></td>
         </tr>
       `).join('');
     }}
 
-    let currentSegments = [...APP_DATA.seg_actions];
+    let currentSegments = (APP_DATA && APP_DATA.seg_actions) ? [...APP_DATA.seg_actions] : [];
     renderSegmentsTable(currentSegments);
 
     function filterSegments() {{
-      const query = document.getElementById('segSearch').value.toLowerCase();
-      const action = document.getElementById('segActionFilter').value;
-      const tier = document.getElementById('segTierFilter').value;
+      const searchEl = document.getElementById('segSearch');
+      const actionEl = document.getElementById('segActionFilter');
+      const tierEl = document.getElementById('segTierFilter');
+      if (!searchEl || !actionEl || !tierEl) return;
 
-      currentSegments = APP_DATA.seg_actions.filter(r => {{
-        const matchesQuery = r.category.toLowerCase().includes(query) || r.city_tier.toLowerCase().includes(query);
+      const query = searchEl.value.toLowerCase();
+      const action = actionEl.value;
+      const tier = tierEl.value;
+
+      currentSegments = (APP_DATA.seg_actions || []).filter(r => {{
+        const matchesQuery = (r.category || '').toLowerCase().includes(query) || (r.city_tier || '').toLowerCase().includes(query);
         const matchesAction = action === 'ALL' || r.action === action;
         const matchesTier = tier === 'ALL' || r.city_tier === tier;
         return matchesQuery && matchesAction && matchesTier;
@@ -1480,16 +1832,20 @@ def run(verbose: bool = True) -> str:
         if (typeof valA === 'string') {{
           return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
         }}
-        return sortAsc ? valA - valB : valB - valA;
+        return sortAsc ? (valA || 0) - (valB || 0) : (valB || 0) - (valA || 0);
       }});
       sortAsc = !sortAsc;
       renderSegmentsTable(currentSegments);
     }}
 
-    // 4. Interactive Sizing Simulator
+    // 5. Interactive Sizing Simulator
     function updateSim() {{
-      const uplift = parseFloat(document.getElementById('fillSlider').value);
-      const discount = parseFloat(document.getElementById('discSlider').value);
+      const fillEl = document.getElementById('fillSlider');
+      const discEl = document.getElementById('discSlider');
+      if (!fillEl || !discEl || !APP_DATA.opp_inputs) return;
+
+      const uplift = parseFloat(fillEl.value);
+      const discount = parseFloat(discEl.value);
 
       document.getElementById('fillUpliftVal').textContent = `+${{uplift.toFixed(1)}} pp`;
       document.getElementById('discVal').textContent = `-${{discount.toFixed(1)}}%`;
@@ -1500,25 +1856,25 @@ def run(verbose: bool = True) -> str:
       let placementRevs = [];
 
       const rows = APP_DATA.opp_inputs.map(inp => {{
-        const curFill = inp.fill_rate * 100;
+        const curFill = (inp.fill_rate || 0) * 100;
         const newFill = Math.min(92.0, curFill + uplift);
-        const extraImpr = Math.max(0, (newFill - curFill) / 100 * inp.capacity_3m);
-        const marginalCpm = inp.cpm_inr * (1 - discount / 100);
+        const extraImpr = Math.max(0, (newFill - curFill) / 100 * (inp.capacity_3m || 0));
+        const marginalCpm = (inp.cpm_inr || 0) * (1 - discount / 100);
         const incRev = (extraImpr * marginalCpm) / 1000;
 
         totalExtraImpr += extraImpr;
         totalIncRev += incRev;
-        baseRev += inp.ad_revenue_3m_inr;
+        baseRev += (inp.ad_revenue_3m_inr || 0);
 
         placementRevs.push({{ name: inp.placement, rev: incRev }});
 
         return `
           <tr>
             <td><strong>${{inp.placement}}</strong></td>
-            <td>${{(inp.capacity_3m / 1e6).toFixed(1)}} M</td>
+            <td>${{((inp.capacity_3m || 0) / 1e6).toFixed(1)}} M</td>
             <td>${{curFill.toFixed(1)}}%</td>
             <td><strong>${{newFill.toFixed(1)}}%</strong></td>
-            <td>₹${{inp.cpm_inr.toFixed(1)}}</td>
+            <td>₹${{(inp.cpm_inr || 0).toFixed(1)}}</td>
             <td>₹${{marginalCpm.toFixed(1)}}</td>
             <td>+${{(extraImpr / 1e6).toFixed(2)}} M</td>
             <td><strong>+₹${{(incRev / 1e5).toFixed(2)}} L</strong></td>
@@ -1530,10 +1886,12 @@ def run(verbose: bool = True) -> str:
       document.getElementById('simRevQtr').textContent = `+₹${{(totalIncRev / 1e5).toFixed(1)}} L`;
       document.getElementById('simRevAnn').textContent = `₹${{(totalIncRev * 4 / 1e7).toFixed(2)}} Cr`;
       document.getElementById('simExtraImpr').textContent = `${{(totalExtraImpr / 1e6).toFixed(1)}} M`;
-      document.getElementById('simRevUpliftPct').textContent = `+${{(totalIncRev / baseRev * 100).toFixed(1)}}% vs Baseline`;
+      document.getElementById('simRevUpliftPct').textContent = `+${{(baseRev > 0 ? totalIncRev / baseRev * 100 : 0).toFixed(1)}}% vs Baseline`;
 
-      placementRevs.sort((a, b) => b.rev - a.rev);
-      document.getElementById('simTopPlacement').textContent = placementRevs[0].name;
+      if (placementRevs.length > 0) {{
+        placementRevs.sort((a, b) => b.rev - a.rev);
+        document.getElementById('simTopPlacement').textContent = placementRevs[0].name;
+      }}
     }}
 
     function applyPreset(uplift, discount) {{
@@ -1543,20 +1901,6 @@ def run(verbose: bool = True) -> str:
     }}
 
     updateSim();
-
-    // 5. Modal Chart Zoom
-    function openChartModal(chartKey, title) {{
-      const chartMap = {{
-        {"".join([f"'{name}': '{_img_base64(name)}',\n" for name, _, _ in CHARTS])}
-      }};
-      document.getElementById('modalImg').src = chartMap[chartKey] || '';
-      document.getElementById('modalCaption').textContent = title;
-      document.getElementById('chartModal').classList.add('open');
-    }}
-
-    function closeChartModal() {{
-      document.getElementById('chartModal').classList.remove('open');
-    }}
   </script>
 </body>
 </html>"""

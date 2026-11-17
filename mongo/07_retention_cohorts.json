@@ -1,0 +1,33 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$project": {
+      "advertiser_id": "$c.advertiser_id",
+      "active_month": {
+        "$substr": [
+          "$date",
+          0,
+          7
+        ]
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": {
+        "advertiser_id": "$advertiser_id",
+        "active_month": "$active_month"
+      }
+    }
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$group": {
+      "_id": {
+        "date": "$date",
+        "placement": "$c.placement"
+      },
+      "filled": {
+        "$sum": "$impressions"
+      }
+    }
+  },
+  {
+    "$lookup": {
+      "from": "inventory",
+      "let": {
+        "d": "$_id.date",
+        "p": "$_id.placement"
+      },
+      "pipeline": [
+        {
+          "$match": {
+            "$expr": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$date",
+                    "$$d"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$placement",
+                    "$$p"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "as": "inv"
+    }
+  },
+  {
+    "$unwind": "$inv"
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "date": "$_id.date",
+      "month": {
+        "$substr": [
+          "$_id.date",
+          0,
+          7
+        ]
+      },
+      "placement": "$_id.placement",
+      "filled": 1,
+      "capacity": "$inv.capacity_impressions",
+      "is_high_util": {
+        "$cond": [
+          {
+            "$gte": [
+              {
+                "$divide": [
+                  "$filled",
+                  "$inv.capacity_impressions"
+                ]
+              },
+              0.85
+            ]
+          },
+          1,
+          0
+        ]
+      }
+    }
+  }
+]

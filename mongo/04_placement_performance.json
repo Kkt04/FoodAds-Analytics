@@ -1,0 +1,132 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$group": {
+      "_id": "$c.placement",
+      "impressions": {
+        "$sum": "$impressions"
+      },
+      "clicks": {
+        "$sum": "$clicks"
+      },
+      "orders": {
+        "$sum": "$orders"
+      },
+      "spend": {
+        "$sum": "$spend"
+      },
+      "revenue": {
+        "$sum": "$attributed_revenue"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "placement": "$_id",
+      "impressions": 1,
+      "ad_revenue_inr": {
+        "$round": [
+          "$spend",
+          0
+        ]
+      },
+      "ctr_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$clicks",
+                  "$impressions"
+                ]
+              },
+              100
+            ]
+          },
+          3
+        ]
+      },
+      "cpm_inr": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$spend",
+                  "$impressions"
+                ]
+              },
+              1000
+            ]
+          },
+          1
+        ]
+      },
+      "cost_per_click_inr": {
+        "$round": [
+          {
+            "$divide": [
+              "$spend",
+              "$clicks"
+            ]
+          },
+          2
+        ]
+      },
+      "cost_per_order_inr": {
+        "$round": [
+          {
+            "$divide": [
+              "$spend",
+              "$orders"
+            ]
+          },
+          1
+        ]
+      },
+      "click_to_order_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$orders",
+                  "$clicks"
+                ]
+              },
+              100
+            ]
+          },
+          2
+        ]
+      },
+      "roas": {
+        "$round": [
+          {
+            "$divide": [
+              "$revenue",
+              "$spend"
+            ]
+          },
+          2
+        ]
+      }
+    }
+  },
+  {
+    "$sort": {
+      "roas": -1
+    }
+  }
+]

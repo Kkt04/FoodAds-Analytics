@@ -1,0 +1,115 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$lookup": {
+      "from": "advertisers",
+      "localField": "c.advertiser_id",
+      "foreignField": "advertiser_id",
+      "as": "a"
+    }
+  },
+  {
+    "$unwind": "$a"
+  },
+  {
+    "$group": {
+      "_id": {
+        "advertiser_size": "$a.advertiser_size",
+        "city_tier": "$a.city_tier"
+      },
+      "advertisers": {
+        "$addToSet": "$a.advertiser_id"
+      },
+      "spend": {
+        "$sum": "$spend"
+      },
+      "impressions": {
+        "$sum": "$impressions"
+      },
+      "clicks": {
+        "$sum": "$clicks"
+      },
+      "orders": {
+        "$sum": "$orders"
+      },
+      "revenue": {
+        "$sum": "$attributed_revenue"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "advertiser_size": "$_id.advertiser_size",
+      "city_tier": "$_id.city_tier",
+      "advertisers": {
+        "$size": "$advertisers"
+      },
+      "ad_revenue_inr": {
+        "$round": [
+          "$spend",
+          0
+        ]
+      },
+      "ctr_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$clicks",
+                  "$impressions"
+                ]
+              },
+              100
+            ]
+          },
+          3
+        ]
+      },
+      "click_to_order_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$orders",
+                  "$clicks"
+                ]
+              },
+              100
+            ]
+          },
+          2
+        ]
+      },
+      "roas": {
+        "$round": [
+          {
+            "$divide": [
+              "$revenue",
+              "$spend"
+            ]
+          },
+          2
+        ]
+      }
+    }
+  },
+  {
+    "$sort": {
+      "advertiser_size": 1,
+      "city_tier": 1
+    }
+  }
+]

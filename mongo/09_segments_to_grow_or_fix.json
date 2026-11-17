@@ -1,0 +1,74 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$lookup": {
+      "from": "advertisers",
+      "localField": "c.advertiser_id",
+      "foreignField": "advertiser_id",
+      "as": "a"
+    }
+  },
+  {
+    "$unwind": "$a"
+  },
+  {
+    "$group": {
+      "_id": {
+        "category": "$a.category",
+        "city_tier": "$a.city_tier"
+      },
+      "advertisers": {
+        "$addToSet": "$a.advertiser_id"
+      },
+      "spend": {
+        "$sum": "$spend"
+      },
+      "revenue": {
+        "$sum": "$attributed_revenue"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "category": "$_id.category",
+      "city_tier": "$_id.city_tier",
+      "advertisers": {
+        "$size": "$advertisers"
+      },
+      "spend": {
+        "$round": [
+          "$spend",
+          0
+        ]
+      },
+      "attributed_revenue": {
+        "$round": [
+          "$revenue",
+          0
+        ]
+      },
+      "roas": {
+        "$round": [
+          {
+            "$divide": [
+              "$revenue",
+              "$spend"
+            ]
+          },
+          2
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,121 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$project": {
+      "month": {
+        "$substr": [
+          "$date",
+          0,
+          7
+        ]
+      },
+      "impressions": 1,
+      "clicks": 1,
+      "orders": 1,
+      "spend": 1,
+      "attributed_revenue": 1,
+      "advertiser_id": "$c.advertiser_id"
+    }
+  },
+  {
+    "$group": {
+      "_id": "$month",
+      "impressions": {
+        "$sum": "$impressions"
+      },
+      "clicks": {
+        "$sum": "$clicks"
+      },
+      "orders": {
+        "$sum": "$orders"
+      },
+      "spend": {
+        "$sum": "$spend"
+      },
+      "revenue": {
+        "$sum": "$attributed_revenue"
+      },
+      "advertisers": {
+        "$addToSet": "$advertiser_id"
+      }
+    }
+  },
+  {
+    "$sort": {
+      "_id": 1
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "month": "$_id",
+      "impressions": 1,
+      "clicks": 1,
+      "orders": 1,
+      "ad_revenue_inr": {
+        "$round": [
+          "$spend",
+          0
+        ]
+      },
+      "ctr_pct": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$clicks",
+                  "$impressions"
+                ]
+              },
+              100
+            ]
+          },
+          3
+        ]
+      },
+      "cpm_inr": {
+        "$round": [
+          {
+            "$multiply": [
+              {
+                "$divide": [
+                  "$spend",
+                  "$impressions"
+                ]
+              },
+              1000
+            ]
+          },
+          1
+        ]
+      },
+      "roas": {
+        "$round": [
+          {
+            "$divide": [
+              "$revenue",
+              "$spend"
+            ]
+          },
+          2
+        ]
+      },
+      "active_advertisers": {
+        "$size": "$advertisers"
+      },
+      "_spend": "$spend",
+      "_impr": "$impressions"
+    }
+  }
+]

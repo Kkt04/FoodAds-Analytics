@@ -1,0 +1,81 @@
+[
+  {
+    "$lookup": {
+      "from": "campaigns",
+      "localField": "campaign_id",
+      "foreignField": "campaign_id",
+      "as": "c"
+    }
+  },
+  {
+    "$unwind": "$c"
+  },
+  {
+    "$lookup": {
+      "from": "advertisers",
+      "localField": "c.advertiser_id",
+      "foreignField": "advertiser_id",
+      "as": "a"
+    }
+  },
+  {
+    "$unwind": "$a"
+  },
+  {
+    "$group": {
+      "_id": {
+        "advertiser_id": "$a.advertiser_id",
+        "advertiser_name": "$a.advertiser_name",
+        "category": "$a.category",
+        "city_tier": "$a.city_tier",
+        "advertiser_size": "$a.advertiser_size",
+        "churn_date": "$a.churn_date"
+      },
+      "spend": {
+        "$sum": "$spend"
+      },
+      "revenue": {
+        "$sum": "$attributed_revenue"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "advertiser_id": "$_id.advertiser_id",
+      "advertiser_name": "$_id.advertiser_name",
+      "category": "$_id.category",
+      "city_tier": "$_id.city_tier",
+      "advertiser_size": "$_id.advertiser_size",
+      "churned": {
+        "$cond": [
+          {
+            "$ne": [
+              "$_id.churn_date",
+              null
+            ]
+          },
+          1,
+          0
+        ]
+      },
+      "ad_revenue_inr": {
+        "$round": [
+          "$spend",
+          0
+        ]
+      },
+      "roas": {
+        "$round": [
+          {
+            "$divide": [
+              "$revenue",
+              "$spend"
+            ]
+          },
+          2
+        ]
+      }
+    }
+  }
+]

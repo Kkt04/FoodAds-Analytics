@@ -2,8 +2,8 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests: 14 Passed](https://img.shields.io/badge/Tests-14%20Passed-brightgreen.svg)](tests/)
-[![Architecture: SQLite + Pandas + Scipy](https://img.shields.io/badge/Stack-SQLite%20%7C%20Pandas%20%7C%20SciPy-orange.svg)](#system-architecture)
+[![Tests: 15 Passed](https://img.shields.io/badge/Tests-15%20Passed-brightgreen.svg)](tests/)
+[![Architecture: MongoDB + PyMongo + Pandas](https://img.shields.io/badge/Stack-MongoDB%20%7C%20PyMongo%20%7C%20Pandas-green.svg)](#system-architecture)
 
 An end-to-end, executive-grade business analytics platform modeling the unit economics, statistical experimentation, and inventory yield optimization of a high-volume **three-sided food delivery advertising marketplace** (analogous to Swiggy Ads, Zomato Ads, DoorDash, and Uber Eats).
 
@@ -37,9 +37,9 @@ The platform generates a self-contained, responsive enterprise intelligence cons
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│  FOODADS INTELLIGENCE CONSOLE    [● PRODUCTION RUN]    [Jul 2025 - Jun 2026]    [☀️ / 🌙] │
+│  FOODADS INTELLIGENCE CONSOLE    [PRODUCTION RUN]      [Jul 2025 - Jun 2026]    [Theme]   │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
-│  [📊 Executive P&L] [🎯 Inventory & Yield] [🍱 Category Matrix] [🔄 Churn] [🧪 A/B Test]  │
+│  [Executive P&L] [Inventory & Yield] [Category Matrix] [Retention & Churn] [A/B Test] │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │  Topline KPIs: ₹50.7 Cr Spend  │  1.02B Impr  │  3.54x ROAS  │  +₹81.6L Upside (Base)  │
 ├─────────────────────────────────────────────┬──────────────────────────────────────────┤
@@ -47,17 +47,19 @@ The platform generates a self-contained, responsive enterprise intelligence cons
 │  - Jul 2025: ₹1.1 Cr -> Jun 2026: ₹6.3 Cr   │  - Biryani (Metro): 5.6x ROAS  -> GROW   │
 │  - ROAS flat: Volume-driven scaling         │  - Beverages (Tier-2): 0.8x ROAS -> FIX   │
 ├─────────────────────────────────────────────┴──────────────────────────────────────────┤
-│  🧮 Interactive Opportunity Calculator: [Fill Uplift: +6.0%] [Marginal Discount: -25%] │
+│  Interactive Opportunity Calculator: [Fill Uplift: +6.0%] [Marginal Discount: -25%]    │
 │  -> Live Recalculation: +₹81.6 Lakhs/Quarter (+4.4%) | Annual Run-Rate: ₹3.26 Cr       │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Key Console Capabilities
 1. **Interactive Navigation:** Seamless tabs switching between Executive Overview, Placement Yield, Category & Segment Breakdown, Retention Cohorts, A/B Testing Suite, and Live Simulator.
-2. **Searchable & Sortable Segment Data Grid:** Instant client-side search and multi-column sorting across 30 category-tier segments with action badges (`FIX`, `GROW`, `MAINTAIN`).
-3. **Real-Time Client-Side Opportunity Simulator:** Dynamic interactive sliders for fill rate uplift (+1% to +15%) and marginal CPM discounts (0% to 60%) that recalculate incremental revenue and placement yield live in the browser.
-4. **Publication-Grade Chart Inspection:** Matplotlib charts are embedded with modal zoom for executive presentations and report reviews.
-5. **Zero-Dependency Portability:** Single self-contained HTML file (offline capable, no npm build step required, no external CDN dependencies).
+2. **In-Dashboard Modal Dialog Boxes:** Both the **Executive Memo** and **Technical Documentation** open in sleek, scrollable in-app modal boxes with zero external page navigation, plus a dedicated documentation reference section at the bottom of the console.
+3. **Searchable & Sortable Segment Data Grid:** Instant client-side search and multi-column sorting across 30 category-tier segments with action badges (`FIX`, `GROW`, `MAINTAIN`).
+4. **Real-Time Client-Side Opportunity Simulator:** Dynamic interactive sliders for fill rate uplift (+1% to +15%) and marginal CPM discounts (0% to 60%) that recalculate incremental revenue and placement yield live in the browser.
+5. **Publication-Grade Chart Inspection:** Matplotlib charts are embedded with modal zoom for executive presentations and report reviews.
+6. **Database Architecture:** Native MongoDB 8.0 aggregation pipelines with compound indexes and JSON pipeline exports in `mongo/`.
+7. **Zero-Dependency Portability:** Single self-contained HTML file (offline capable, no npm build step required, no external CDN dependencies).
 
 ---
 
@@ -296,14 +298,15 @@ start outputs\dashboard.html
 ```bash
 pytest -v
 ```
-All **14 tests** validate:
+All **15 tests** validate:
+- MongoDB pipeline ingestion (typed collections, document counts, index creation).
 - Relational integrity (zero orphan campaigns, monotonic funnel counts).
 - Non-negative boundary constraints on impressions, clicks, spend, and GMV.
 - Inventory fill rate constraints ($\le 100\%$).
-- Mathematical exactness between SQL aggregations and Pandas vectorized sums.
+- Mathematical exactness between aggregations and Pandas vectorized sums.
 - Statistical correctness of pooled two-proportion z-tests and sample size formulas.
 - Deterministic decision rule execution across all hypothesis outcomes.
-- End-to-end compilation and integrity of the HTML dashboard.
+- End-to-end compilation, valid JSON parsing, and DOM integrity of the HTML dashboard.
 
 ---
 

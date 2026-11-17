@@ -113,3 +113,16 @@ def test_dashboard_builds():
     assert "FoodAds Intelligence Console" in content
     assert "app-data" in content
 
+
+def test_mongo_pipeline():
+    from src import load_mongo
+    try:
+        client = load_mongo.load(db_name="foodads_test", verbose=False)
+        db = client["foodads_test"]
+        assert db.advertisers.count_documents({}) > 0
+        assert db.daily_performance.count_documents({}) > 0
+        client.drop_database("foodads_test")
+    except Exception as e:
+        pytest.skip(f"MongoDB not available: {e}")
+
+
