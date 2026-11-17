@@ -1,10 +1,11 @@
 """Tests: data integrity, KPI formulas, and the A/B statistics.  Run:  pytest -q"""
+from pathlib import Path
 import sqlite3
 
 import pandas as pd
 import pytest
 
-from src import ab_test, generate_data, load_db
+from src import ab_test, build_dashboard, generate_data, load_db
 
 
 @pytest.fixture(scope="module")
@@ -101,3 +102,14 @@ def test_decision_rule():
     assert ab_test.decide(win, [flat])[0] == "SHIP"
     assert ab_test.decide(win, [bad])[0] == "HOLD"
     assert ab_test.decide(flat, [flat])[0] == "DO NOT SHIP"
+
+
+def test_dashboard_builds():
+    out = build_dashboard.run(verbose=False)
+    p = Path(out)
+    assert p.exists()
+    assert p.stat().st_size > 50000
+    content = p.read_text(encoding="utf-8")
+    assert "FoodAds Intelligence Console" in content
+    assert "app-data" in content
+
